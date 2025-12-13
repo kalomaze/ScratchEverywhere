@@ -14,16 +14,11 @@ BlockResult EventBlocks::whenBackdropSwitchesTo(Block &block, Sprite *sprite, bo
 
 BlockResult EventBlocks::broadcast(Block &block, Sprite *sprite, bool *withoutScreenRefresh, bool fromRepeat) {
     std::string name = Scratch::getInputValue(block, "BROADCAST_INPUT", sprite).asString();
-    std::cerr << "[BROADCAST-FIRE] " << name << std::endl;
     broadcastQueue.push_back(name);
     return BlockResult::CONTINUE;
 }
 
 BlockResult EventBlocks::broadcastAndWait(Block &block, Sprite *sprite, bool *withoutScreenRefresh, bool fromRepeat) {
-    if (block.repeatTimes == -1) {
-        std::cerr << "[BROADCAST-AND-WAIT] " << Scratch::getInputValue(block, "BROADCAST_INPUT", sprite).asString() << std::endl;
-    }
-
     if (block.repeatTimes != -1 && !fromRepeat) {
         block.repeatTimes = -1;
     }

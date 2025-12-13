@@ -447,10 +447,26 @@ BlockResult BlockExecutor::runCustomBlock(Sprite *sprite, Block &block, Block *c
                 data.argumentValues[arg] = block.parsedInputs->find(arg) == block.parsedInputs->end() ? Value(0) : Scratch::getInputValue(block, arg, sprite);
             }
 
-            // std::cout << "running custom block " << data.blockId << std::endl;
-
-            // Get the parent of the prototype block (the definition containing all blocks)
-            Block *customBlockDefinition = &sprite->blocks[sprite->blocks[data.blockId].parent];
+            // Find the procedures_definition block that contains this prototype
+            Block *customBlockDefinition = nullptr;
+            for (auto &[bid, blk] : sprite->blocks) {
+                if (blk.opcode == "procedures_definition") {
+                    if (!blk.parsedInputs) continue;
+                    auto it = blk.parsedInputs->find("custom_block");
+                    if (it != blk.parsedInputs->end()) {
+                        std::string prototypeId = it->second.inputType == ParsedInput::LITERAL
+                            ? it->second.literalValue.asString()
+                            : it->second.blockId;
+                        if (prototypeId == data.blockId) {
+                            customBlockDefinition = &sprite->blocks[bid];
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!customBlockDefinition) {
+                break;
+            }
 
             callerBlock->customBlockPtr = customBlockDefinition;
 

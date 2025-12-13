@@ -10,33 +10,17 @@
 #include <cstddef>
 
 BlockResult LooksBlocks::show(Block &block, Sprite *sprite, bool *withoutScreenRefresh, bool fromRepeat) {
-    if (sprite->name.find("enu") != std::string::npos) {
-        std::cerr << "[SHOW] " << sprite->name << (sprite->isClone ? " (clone)" : " (ORIG)") << std::endl;
-    }
     sprite->visible = true;
     Scratch::forceRedraw = true;
     return BlockResult::CONTINUE;
 }
 BlockResult LooksBlocks::hide(Block &block, Sprite *sprite, bool *withoutScreenRefresh, bool fromRepeat) {
-    if (sprite->name.find("enu") != std::string::npos) {
-        std::cerr << "[HIDE] " << sprite->name << (sprite->isClone ? " (clone)" : " (ORIG)") << std::endl;
-    }
     sprite->visible = false;
     return BlockResult::CONTINUE;
 }
 
 BlockResult LooksBlocks::switchCostumeTo(Block &block, Sprite *sprite, bool *withoutScreenRefresh, bool fromRepeat) {
     Value inputValue = Scratch::getInputValue(block, "COSTUME", sprite);
-
-    // Debug: log costume switches for text-related sprites
-    if (sprite->name.find("txt") != std::string::npos ||
-        sprite->name.find("Text") != std::string::npos ||
-        sprite->name.find("font") != std::string::npos ||
-        sprite->name.find("Font") != std::string::npos) {
-        std::cerr << "[COSTUME] " << sprite->name << " -> \"" << inputValue.asString()
-                  << "\" isDouble=" << inputValue.isDouble()
-                  << " isNumeric=" << inputValue.isNumeric() << std::endl;
-    }
 
     if (inputValue.isDouble()) {
         Scratch::switchCostume(sprite, inputValue.isNaN() ? 0 : inputValue.asDouble() - 1);

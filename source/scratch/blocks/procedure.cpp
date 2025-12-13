@@ -56,7 +56,6 @@ Value ProcedureBlocks::booleanArgument(Block &block, Sprite *sprite) {
 }
 
 BlockResult ProcedureBlocks::call(Block &block, Sprite *sprite, bool *withoutScreenRefresh, bool fromRepeat) {
-
     if (block.repeatTimes != -1 && !fromRepeat) {
         block.repeatTimes = -1;
     }

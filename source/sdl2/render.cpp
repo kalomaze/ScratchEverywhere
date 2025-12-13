@@ -425,10 +425,12 @@ void Render::penStamp(Sprite *sprite) {
         image->renderRect.x += (sprite->spriteWidth * (isSVG ? 2 : 1)) * 1.125; // Don't ask why I'm multiplying by 1.125 here, I also have no idea, but it makes it work so...
     }
 
-    // Pen mapping stuff
-    const auto &cords = Scratch::screenToScratchCoords(image->renderRect.x, image->renderRect.y, windowWidth, windowHeight);
-    image->renderRect.x = cords.first + Scratch::projectWidth / 2;
-    image->renderRect.y = -cords.second + Scratch::projectHeight / 2;
+    // Calculate pen position directly from Scratch coordinates (no double conversion)
+    double scale = sprite->size / (isSVG ? 100.0 : 200.0);
+    double rcxOffset = sprite->rotationCenterX * scale;
+    double rcyOffset = sprite->rotationCenterY * scale;
+    image->renderRect.x = static_cast<int>(sprite->xPosition + Scratch::projectWidth / 2.0 - rcxOffset);
+    image->renderRect.y = static_cast<int>(Scratch::projectHeight / 2.0 - sprite->yPosition - rcyOffset);
 
     if (Scratch::hqpen) {
         image->setScale(sprite->renderInfo.renderScaleY);

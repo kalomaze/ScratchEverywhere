@@ -123,9 +123,6 @@ BlockResult ControlBlocks::createCloneOf(Block &block, Sprite *sprite, bool *wit
 }
 BlockResult ControlBlocks::deleteThisClone(Block &block, Sprite *sprite, bool *withoutScreenRefresh, bool fromRepeat) {
     if (sprite->isClone) {
-        if (sprite->name.find("enu") != std::string::npos) {
-            std::cerr << "[DELETE] " << sprite->name << " costume=" << sprite->currentCostume << std::endl;
-        }
         sprite->toDelete = true;
         return BlockResult::CONTINUE;
     }
