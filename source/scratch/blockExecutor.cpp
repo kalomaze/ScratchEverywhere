@@ -392,7 +392,10 @@ void BlockExecutor::runRepeatBlocks() {
     // repeat ONLY the block most recently added to the repeat chain,,,
     std::vector<Sprite *> sprToRun = sprites;
     for (auto &sprite : sprToRun) {
-        for (auto &[id, blockChain] : sprite->blockChains) {
+        for (const std::string &chainId : sprite->blockChainOrder) {
+            auto it = sprite->blockChains.find(chainId);
+            if (it == sprite->blockChains.end()) continue;
+            auto &blockChain = it->second;
             auto &repeatList = blockChain.blocksToRepeat;
             if (!repeatList.empty()) {
                 std::string toRepeat = repeatList.back();
