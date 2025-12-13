@@ -104,7 +104,6 @@ BlockResult ControlBlocks::createCloneOf(Block &block, Sprite *sprite, bool *wit
         spriteToClone->isStage = false;
         spriteToClone->toDelete = false;
         spriteToClone->id = Math::generateRandomString(15);
-        // Log::log("Cloned " + sprite->name);
         //  add clone to sprite list
         sprites.push_back(spriteToClone);
         Sprite *addedSprite = sprites.back();
@@ -113,7 +112,6 @@ BlockResult ControlBlocks::createCloneOf(Block &block, Sprite *sprite, bool *wit
             if (currentSprite == addedSprite) {
                 for (auto &[id, block] : currentSprite->blocks) {
                     if (block.opcode == "control_start_as_clone") {
-                        // std::cout << "Running clone block " << block.id << std::endl;
                         executor.runBlock(block, currentSprite, withoutScreenRefresh, fromRepeat);
                     }
                 }
@@ -125,6 +123,9 @@ BlockResult ControlBlocks::createCloneOf(Block &block, Sprite *sprite, bool *wit
 }
 BlockResult ControlBlocks::deleteThisClone(Block &block, Sprite *sprite, bool *withoutScreenRefresh, bool fromRepeat) {
     if (sprite->isClone) {
+        if (sprite->name.find("enu") != std::string::npos) {
+            std::cerr << "[DELETE] " << sprite->name << " costume=" << sprite->currentCostume << std::endl;
+        }
         sprite->toDelete = true;
         return BlockResult::CONTINUE;
     }
@@ -345,9 +346,17 @@ BlockResult ControlBlocks::forever(Block &block, Sprite *sprite, bool *withoutSc
     if (it != block.parsedInputs->end()) {
         Block *subBlock = &sprite->blocks[it->second.blockId];
         if (subBlock) {
-            executor.runBlock(*subBlock, sprite, withoutScreenRefresh, fromRepeat);
+            for (auto &ranBlock : executor.runBlock(*subBlock, sprite, withoutScreenRefresh, fromRepeat)) {
+                if (ranBlock->isRepeating) {
+                    return BlockResult::RETURN;
+                } else if (ranBlock->stopScript) {
+                    ranBlock->stopScript = false;
+                    return BlockResult::RETURN;
+                }
+            }
         }
     }
+    // Substack ran once, yield for next frame
     return BlockResult::RETURN;
 }
 

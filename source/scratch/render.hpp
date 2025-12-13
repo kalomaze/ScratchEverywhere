@@ -112,8 +112,8 @@ class Render {
 
             float renderX;
             float renderY;
-            float spriteX = static_cast<int>(sprite->xPosition);
-            float spriteY = static_cast<int>(sprite->yPosition);
+            float spriteX = sprite->xPosition;
+            float spriteY = sprite->yPosition;
 
             // Handle if the sprite's image is not centered in the costume editor
             if (sprite->spriteWidth - sprite->rotationCenterX != 0 ||
